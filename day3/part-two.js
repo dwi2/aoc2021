@@ -7,24 +7,10 @@ const readInterface = readline.createInterface({
   console: false,
 });
 
-
-const reportsForOxygen = [];
-const reportsForCO2 = [];
-let lineCount = 0;
-readInterface.on("line", (line) => {
-  reportsForOxygen.push(line);
-  reportsForCO2.push(line);
-  
-  lineCount += 1;
-});
-
-readInterface.on("close", () => {
-  const digitLength = reportsForOxygen[0].length;
-
-  let oxygenRating, co2Rating;
-
-  let reports = reportsForOxygen;
+const searching = (reports, pickOnes = false) => {
+  const digitLength = reports[0].length;
   let sumOfTheDigit = 0;
+  let rating;
   for (let digitPointer = 0; digitPointer < digitLength; digitPointer += 1) {
     const ones = [];
     const zeros = [];
@@ -38,47 +24,32 @@ readInterface.on("close", () => {
       }
     });
     if (sumOfTheDigit >= (reports.length / 2)) {
-      reports = ones;
+      reports = pickOnes ? ones : zeros;
     } else {
-      reports = zeros;
+      reports = pickOnes ? zeros : ones;
     }
     sumOfTheDigit = 0;
 
     if (reports.length === 1) {
-      oxygenRating = Number.parseInt(reports[0], 2);
+      rating = Number.parseInt(reports[0], 2);
       break;
     }    
   }
 
-  
-  reports = reportsForCO2;
-  sumOfTheDigit = 0;
-  for (let digitPointer = 0; digitPointer < digitLength; digitPointer += 1) {
-    const ones = [];
-    const zeros = [];
+  return rating;
+};
 
-    reports.forEach(report => {
-      if (report[digitPointer] === '1') {
-        sumOfTheDigit += 1;
-        ones.push(report);
-      } else {
-        zeros.push(report);
-      }
-    });
-    if (sumOfTheDigit >= (reports.length / 2)) {
-      reports = zeros;
-    } else {
-      reports = ones;
-    }
-    sumOfTheDigit = 0;
+const reportsForOxygen = [];
+const reportsForCO2 = [];
+readInterface.on("line", (line) => {
+  reportsForOxygen.push(line);
+  reportsForCO2.push(line);
+});
 
-    if (reports.length === 1) {
-      co2Rating = Number.parseInt(reports[0], 2);
-      break;
-    }
-  }
+readInterface.on("close", () => {
+  const oxygenRating = searching(reportsForOxygen, true);
+  const co2Rating = searching(reportsForCO2, false);
 
-  console.log(oxygenRating, co2Rating);
   console.log(oxygenRating * co2Rating);
 });
 
