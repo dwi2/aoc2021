@@ -82,14 +82,14 @@ readInterface.on("close", () => {
     
     const [theBoard, luckyNumber] = e.message.split(',');
     console.log(theBoard, luckyNumber);
-
-    let sumOfUnmarked = 0;
-    boards[theBoard].forEach((n, index) => {
-      if (n) {
-        sumOfUnmarked += index;
+    
+    const sumOfUnmarked = boards[theBoard].reduce((prev, current, currentIndex) => {
+      if (current) {
+        return prev + currentIndex;
       }
-    });
-    console.log(sumOfUnmarked);
+      return prev;
+    }, 0);
+
     console.log(sumOfUnmarked * luckyNumber);
   }
 });
