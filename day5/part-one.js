@@ -78,7 +78,7 @@ readInterface.on("close", () => {
     }
   });
 
-  
+
   const moreThanTwo = Object.values(diagramInText).filter(count => (count >= 2));
   console.log(moreThanTwo.length);
 });
