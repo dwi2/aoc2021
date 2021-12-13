@@ -33,58 +33,40 @@ readInterface.on("line", (line) => {
     if (y > maximumY) {
       maximumY = y;
     }
-    dots.push({x, y});
+    dots.push({ x, y });
   }
 });
 
-const shiftAndReflect = (foldedLine, onX) => {
-  const distance = onX ? maximumX - foldedLine : maximumY - foldedLine
-  const diff = onX ? distance - (maximumX / 2) : distance - (maximumY / 2);
-  // console.log(distance, diff);
-  const newFoldedLine = foldedLine + diff;
-  const newDots = [];
+const reflect = (foldedLine, onX) => {
   if (onX) {
-    dots.forEach(({x,y}) => {
-      const dot = {
-        x: x + diff,
-        y
-      };
-      if (x > newFoldedLine) {
-        dot.x = 2 * newFoldedLine - x;
+    dots.forEach(({ x, y }, index) => {
+      if (x > foldedLine) {
+        x = 2 * foldedLine - x;
       }
-      // console.log(`(${x}, ${y}) => (${dot.x}, ${dot.y})`);
-      newDots.push(dot);
+      dots[index] = { x, y };
     });
 
   } else {
-    dots.forEach(({x,y}) => {
-      const dot = {
-        x,
-        y: y + diff
-      };
-
-      if (y > newFoldedLine) {
-        dot.y = 2 * newFoldedLine - y;
+    dots.forEach(({ x, y }, index) => {
+      if (y > foldedLine) {
+        y = 2 * foldedLine - y;
       }
-      // console.log(`(${x}, ${y}) => (${dot.x}, ${dot.y})`);
-      newDots.push(dot);
+      dots[index] = { x, y };
     });
   }
-  return newDots;
 };
 
 readInterface.on("close", () => {
-  const instruction = foldInstructions[0];
-  let newDots;
+  instruction = foldInstructions[0];
   if (instruction.axis === 'x') {
     const xFold = instruction.value;
-    newDots = shiftAndReflect(xFold, true);
+    reflect(xFold, true);
   } else {
     const yFold = instruction.value;
-    newDots = shiftAndReflect(yFold, false);
+    reflect(yFold, false);
   }
   const uniqueDots = [];
-  newDots.forEach(dot => {
+  dots.forEach(dot => {
     const found = uniqueDots.find(ud => {
       return ud.x === dot.x && ud.y === dot.y;
     });
@@ -92,5 +74,7 @@ readInterface.on("close", () => {
       uniqueDots.push(dot);
     }
   })
+
   console.log(uniqueDots.length);
+
 });

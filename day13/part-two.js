@@ -40,11 +40,10 @@ readInterface.on("line", (line) => {
 const reflect = (foldedLine, onX) => {
   if (onX) {
     dots.forEach(({ x, y }, index) => {
-      const oldX = x;
       if (x > foldedLine) {
         x = 2 * foldedLine - x;
       }
-      // console.log(`(${oldX}, ${y}) ==> (${x}, ${y})`);
+
       dots[index] = { x, y };
     });
 
