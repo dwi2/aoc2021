@@ -74,13 +74,12 @@ const print = () => {
     }
   })
 
-  const width = right - left;
   let line = '';
-  for (x = 0; x <= width; x += 1) {
+  for (x = left; x <= right; x += 1) {
     line += '.';
   }
   const graph = [];
-  for (y = 0; y <= bottom; y += 1) {
+  for (y = top; y <= bottom; y += 1) {
     graph.push(line);
   }
 
