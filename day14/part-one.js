@@ -21,7 +21,7 @@ readInterface.on("line", (line) => {
 const runOneStep = (polymer) => {
   const newBorn = [];
   for (let i = 0; i < polymer.length - 1; i += 1) {
-    const pair = polymer.substring(i, i + 2);
+    const pair = polymer.slice(i, i + 2).join("");
     if (insertionRules[pair]) {
       newBorn.unshift({
         char: insertionRules[pair],
@@ -30,31 +30,24 @@ const runOneStep = (polymer) => {
     }
   }
 
-  let result = polymer;
   newBorn.forEach((entry) => {
-    const resultArray = result.split("");
-    resultArray.splice(entry.pos, 0, entry.char);
-    result = resultArray.join("");
+    polymer.splice(entry.pos, 0, entry.char);
   });
-  return result;
+  return polymer;
 };
 
 readInterface.on("close", () => {
-  // console.log(polymerTemplate);
-
   const STEP_LIMIT = 10;
-  let polymer = polymerTemplate;
+  let polymer = polymerTemplate.split("");
   for (let i = 0; i < STEP_LIMIT; i += 1) {
     polymer = runOneStep(polymer);
-    // console.log(polymer);
   }
-  console.log(polymer);
 
   const characterCount = {};
   let mostCommon;
   let leastCommon;
   for (let c = 0; c < polymer.length; c += 1) {
-    const char = polymer.charAt(c);
+    const char = polymer[c];
     if (!characterCount[char]) {
       characterCount[char] = 0;
     }
@@ -90,5 +83,6 @@ readInterface.on("close", () => {
     }
   });
 
-  console.log(mostCommon, leastCommon, mostCommon.count - leastCommon.count);
+  console.log(mostCommon, leastCommon);
+  console.log(mostCommon.count - leastCommon.count);
 });
